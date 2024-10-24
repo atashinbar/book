@@ -21,6 +21,8 @@ use Rabbit\Utils\Singleton;
 use League\Container\Container;
 use BookPlugin\ServiceProvider;
 use BookPlugin\PostTypes\Book;
+use BookPlugin\Taxonomies\Publisher;
+use BookPlugin\Taxonomies\Author;
 
 /**
  * Class BookPluginInit
@@ -79,6 +81,8 @@ class BookPluginInit extends Singleton
                 $this->custom_provider = new ServiceProvider();
 
                 $this->custom_provider->register(new Book());
+                $this->custom_provider->register(new Publisher());
+                $this->custom_provider->register(new Author());
 
                 // Boot services
                 $this->custom_provider->boot();
