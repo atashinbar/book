@@ -17,9 +17,10 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
 }
 
 use Rabbit\Application;
-use Rabbit\Plugin;
 use Rabbit\Utils\Singleton;
 use League\Container\Container;
+use BookPlugin\ServiceProvider;
+use BookPlugin\PostTypes\Book;
 
 /**
  * Class BookPluginInit
@@ -31,6 +32,11 @@ class BookPluginInit extends Singleton
      * @var Container
      */
     private $application;
+
+    /**
+     * @var Custom Provider
+     */
+    private $custom_provider;
 
     /**
      * BookPluginInit constructor.
@@ -63,6 +69,19 @@ class BookPluginInit extends Singleton
 
                 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
                 dbDelta($sql);
+            });
+
+            $this->application->boot(function ($plugin) {
+                $plugin->loadPluginTextDomain();
+
+                // include files
+                $plugin->includes(__DIR__ . '/src'); // It should be changed in Rabbit Framework Docs
+                $this->custom_provider = new ServiceProvider();
+
+                $this->custom_provider->register(new Book());
+
+                // Boot services
+                $this->custom_provider->boot();
             });
         } catch (Exception $e) {
             /**
